@@ -16,13 +16,15 @@ win32:RC_FILE = resources.rc
 SOURCES += main.cpp\
         mainwindow.cpp \
     aboutdialog.cpp \
-    networkconfigdialog.cpp
+    networkconfigdialog.cpp \
+    routersnetworkdialog.cpp
 
 HEADERS  += mainwindow.h \
     aboutdialog.h \
     version.h \
     networkconfigdialog.h \
-    build_version.h
+    build_version.h \
+    routersnetworkdialog.h
 
 win32:HEADERS +=
 
@@ -32,7 +34,8 @@ FORMS    += mainwindow.ui \
     aboutdialog.ui \
     multdriversconfig.ui \
     networkconfigdialog.ui \
-    dialog.ui
+    dialog.ui \
+    routersnetworkdialog.ui
 
 CONFIG += mobility
 MOBILITY = 

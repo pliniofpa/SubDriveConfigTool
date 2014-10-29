@@ -53,7 +53,9 @@ public:
     ~MainWindow();
 private slots:
     void selectionChanged();
-    void networkConfigDialogSlot();
+    void networkConfigDialogSlot();    
+    void listCurrentConfig();
+    void saveConfig();
     /**
      * @brief Shows application About dialog.
      *
@@ -93,6 +95,10 @@ private slots:
      */
     void listNetworks();
     void selectNetwork();
+
+    void on_edit_pushButton_2_clicked();
+
+    void on_list_pushButton_4_clicked();
 
 private:
     //MainWindow Ui

@@ -48,12 +48,20 @@
            <property name="text">
             <string>Update List</string>
            </property>
+           <property name="icon">
+            <iconset resource="res.qrc">
+             <normaloff>:/images/1414629197_list-unordered-128.png</normaloff>:/images/1414629197_list-unordered-128.png</iconset>
+           </property>
           </widget>
          </item>
          <item>
           <widget class="QCheckBox" name="only_subdrive_checkBox">
            <property name="text">
             <string>Only SubDrive Wireless Networks</string>
+           </property>
+           <property name="icon">
+            <iconset resource="res.qrc">
+             <normaloff>:/images/1414629133_empty_filter.png</normaloff>:/images/1414629133_empty_filter.png</iconset>
            </property>
           </widget>
          </item>
@@ -63,6 +71,10 @@
         <widget class="QPushButton" name="select_pushButton_3">
          <property name="text">
           <string>Select</string>
+         </property>
+         <property name="icon">
+          <iconset resource="res.qrc">
+           <normaloff>:/images/Sign-Select-icon.png</normaloff>:/images/Sign-Select-icon.png</iconset>
          </property>
         </widget>
        </item>
@@ -94,6 +106,10 @@
           <widget class="QPushButton" name="list_pushButton_4">
            <property name="text">
             <string>List...</string>
+           </property>
+           <property name="icon">
+            <iconset resource="res.qrc">
+             <normaloff>:/images/1414629197_list-unordered-128.png</normaloff>:/images/1414629197_list-unordered-128.png</iconset>
            </property>
           </widget>
          </item>
@@ -283,50 +299,82 @@
          </layout>
         </widget>
        </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QFrame" name="buttons_frame">
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_8">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_6">
-         <item>
-          <spacer name="horizontalSpacer_2">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QPushButton" name="save_pushButton">
-           <property name="text">
-            <string>Save</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="edit_pushButton_2">
-           <property name="text">
-            <string>Edit</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pushButton">
-           <property name="text">
-            <string>Refresh</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="advanced_pushButton">
-           <property name="text">
-            <string>Advanced</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="save_pushButton">
+         <property name="text">
+          <string>Save</string>
+         </property>
+         <property name="icon">
+          <iconset resource="res.qrc">
+           <normaloff>:/images/document_save.png</normaloff>:/images/document_save.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="edit_pushButton_2">
+         <property name="text">
+          <string>Edit</string>
+         </property>
+         <property name="icon">
+          <iconset resource="res.qrc">
+           <normaloff>:/images/pencil3.png</normaloff>:/images/pencil3.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="retrieve_pushButton">
+         <property name="text">
+          <string>Retrieve Config.</string>
+         </property>
+         <property name="icon">
+          <iconset resource="res.qrc">
+           <normaloff>:/images/Refresh-icon.png</normaloff>:/images/Refresh-icon.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="advanced_pushButton">
+         <property name="text">
+          <string>Advanced...</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -339,7 +387,7 @@
      <x>0</x>
      <y>0</y>
      <width>487</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

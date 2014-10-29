@@ -12,10 +12,14 @@
 #include <QItemSelectionModel>
 #include <QSettings>
 #include <QMessageBox>
+#include <QDomDocument>
+#include <QDomNodeList>
+#include <QDomNode>
 #include "networkconfigdialog.h"
 #include "aboutdialog.h"
 #include "version.h"
 #include "build_version.h"
+#include "routersnetworkdialog.h"
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -25,11 +29,14 @@ MainWindow::MainWindow(QWidget *parent) :
     this->reply = 0;
     this->makeconnections();
     this->ui->advanced_frame->setVisible(false);
-    //Disables Configuration Group Box
+    //Disables Configuration Group Box and Buttons Frame
     this->ui->configuration_groupBox->setEnabled(false);
+    this->ui->buttons_frame->setEnabled(false);
+    //Disables Save Button
+    this->ui->save_pushButton->setEnabled(false);
     //Default SubDrive Address
     //this->default_address = "http://192.168.240.1";
-    this->default_address = "http://localhost";
+    this->default_address = "http://localhost/data.php?group=0";
     this->loadUerPreferences();
     //Create Network Table
     createNetworksTable();
@@ -39,6 +46,8 @@ MainWindow::MainWindow(QWidget *parent) :
     listNetworks();
 }
 void MainWindow::selectionChanged(){
+    qDebug()<< Q_FUNC_INFO;
+
     if(this->ui->networks_tableWidget->selectedItems().size()!=0){
         this->ui->select_pushButton_3->setEnabled(true);
     }
@@ -53,6 +62,8 @@ void MainWindow::makeconnections(){
     connect(this->ui->select_pushButton_3,SIGNAL(clicked()),this,SLOT(selectNetwork()));
     connect(&this->requestTimeOut,SIGNAL(timeout()),this,SLOT(abortRequest()));
     connect(this->ui->networks_tableWidget,SIGNAL(itemSelectionChanged()),this,SLOT(selectionChanged()));
+    connect(this->ui->retrieve_pushButton,SIGNAL(clicked()),this,SLOT(listCurrentConfig()));
+    connect(this->ui->save_pushButton,SIGNAL(clicked()),this,SLOT(saveConfig()));
 }
 
 void MainWindow::createNetworksTable(){
@@ -137,29 +148,69 @@ void MainWindow::selectNetwork(){
         this->ui->networks_tableWidget->setEnabled(false);
         this->ui->only_subdrive_checkBox->setEnabled(false);
         this->ui->updateList_pushButton->setEnabled(false);
-        //Send Read Configuration Request
-        QByteArray xml_request;
-        QXmlStreamWriter stream(&xml_request);
-        stream.setAutoFormatting(true);
-        stream.writeStartDocument();
-        stream.writeStartElement("CCL");
-        //stream.writeAttribute("href", "http://qt-project.org/");
-        //stream.writeTextElement("title", "Qt Project");
-        stream.writeCharacters("1");
-        stream.writeEndElement(); // bookmark
-        stream.writeEndDocument();
-
-        qDebug()<<xml_request;
-
-        this->request(xml_request);
+        //Changes the text to Change Network again
         this->ui->select_pushButton_3->setText("Change Network");
+        //List Current Configuration
+        listCurrentConfig();
     }else{
         //Enables elements for selecting a Network
         this->ui->networks_tableWidget->setEnabled(true);
         this->ui->only_subdrive_checkBox->setEnabled(true);
         this->ui->updateList_pushButton->setEnabled(true);
+        //Disables Configuration Group Box and Buttons Frame
+        this->ui->configuration_groupBox->setEnabled(false);
+        this->ui->buttons_frame->setEnabled(false);
+        //Changes the text to Select again
         this->ui->select_pushButton_3->setText("Select");
     }
+}
+
+void MainWindow::listCurrentConfig(){
+    //Disables Configuration Group Box and Buttons Frame
+    this->ui->configuration_groupBox->setEnabled(false);
+    this->ui->buttons_frame->setEnabled(false);
+    //Send Read Configuration Request
+    QByteArray xml_request;
+    QXmlStreamWriter stream(&xml_request);
+    stream.setAutoFormatting(true);
+    stream.writeStartDocument();
+    stream.writeStartElement("CCL");
+    //stream.writeAttribute("href", "http://qt-project.org/");
+    //stream.writeTextElement("title", "Qt Project");
+    stream.writeCharacters("1");
+    stream.writeEndElement(); // bookmark
+    stream.writeEndDocument();
+    this->request(xml_request);
+}
+
+void MainWindow::saveConfig(){
+    //Disables Configuration Group Box and Buttons Frame
+    this->ui->configuration_groupBox->setEnabled(false);
+    this->ui->buttons_frame->setEnabled(false);
+    //Send Read Configuration Request
+    QByteArray xml_request;
+    QXmlStreamWriter stream(&xml_request);
+    stream.setAutoFormatting(true);
+    stream.writeStartDocument();
+    stream.writeStartElement("SSID");
+    stream.writeCharacters(this->ui->router_ssid_lineEdit_2->text());
+    stream.writeEndElement(); // SSID
+    stream.writeStartElement("PWD");
+    stream.writeCharacters(this->ui->router_pwd_lineEdit_3->text());
+    stream.writeEndElement(); // PWD
+    stream.writeStartElement("SWSID");
+    stream.writeCharacters(this->ui->subdrive_web_id_lineEdit->text());
+    stream.writeEndElement(); // SWSID
+    stream.writeStartElement("SCI");
+    stream.writeCharacters(QString::number(this->ui->server_comm_interval_spinBox->value()));
+    stream.writeEndElement(); // SCI
+    stream.writeStartElement("SADD");
+    stream.writeCharacters(this->ui->server_address_lineEdit_4->text());
+    stream.writeEndElement(); // SADD
+    stream.writeEndDocument();
+    this->request(xml_request);
+    //Call Function of Clicking Edit Button
+    this->on_edit_pushButton_2_clicked();
 }
 
 MainWindow::~MainWindow()
@@ -188,7 +239,8 @@ void MainWindow::request(QByteArray xml_request){
     if(this->custom_address_enabled){
         url = new QUrl(this->subdrive_custom_address+"/gainspan/profile/mcu");
     }else{
-        url = new QUrl(QString(this->default_address+"/gainspan/profile/mcu"));
+        //url = new QUrl(QString(this->default_address+"/gainspan/profile/mcu"));
+        url = new QUrl(QString(this->default_address));
     }
     QNetworkRequest request(*url);
     //Sets Content Type for request
@@ -203,37 +255,58 @@ void MainWindow::abortRequest(){
     if(this->reply){
         this->reply->abort();
     }
-    qDebug()<<"Aborted";
     QMessageBox::critical(0, qApp->tr("Time out!"),
                           qApp->tr("Impossible to establish connection to %1\n"
                                    "Check you connection for errors or try to\n"
-                                   "use a timeout greater than %2 seconds").arg(this->manager->configuration().name()).arg(this->timeout), QMessageBox::Cancel);
+                                   "use a timeout greater than %2 seconds").arg(this->manager->configuration().name()).arg(this->timeout), QMessageBox::Ok);
 }
 
 void MainWindow::parseXML()
 {
-    //Enables Configuration Group Box
-    this->ui->configuration_groupBox->setEnabled(true);
-    requestTimeOut.stop();
-    if(reply->error()==QNetworkReply::NoError){
+    qDebug()<< Q_FUNC_INFO;
 
-    }else{
-        return;//Interrupt this function in case of error
-    }
-    QDomDocument* doc = new QDomDocument();
+    QDomDocument *doc = new QDomDocument();
     QString *error = new QString();
     int *a = new int(-1);
     int *b = new int(-1);
+    requestTimeOut.stop();
+
+    if(reply->error()==QNetworkReply::NoError){
+        //Enables Configuration Buttons Frame
+        this->ui->buttons_frame->setEnabled(true);
+    }else{
+        QMessageBox::critical(0, qApp->tr("Response Error"),
+                              qApp->tr("An error happened retrieving the response from %1.\n"
+                                       "Is there a SubDrive running on this netowrk?").arg(this->manager->configuration().name()), QMessageBox::Ok);
+        return;//Interrupt this function in case of error
+    }
     QByteArray replyByteArray = reply->readAll();
-    if (!doc->setContent(replyByteArray,error,a,b)) {
+    if (!doc->setContent(replyByteArray,error,a,b)){
+        QMessageBox::critical(0, qApp->tr("Error Parsing XML File"),
+                              qApp->tr("An error occurred while parsing XML Response File.\n"
+                                       "Try to get the Response again Clicking on 'Refresh' button.\n"
+                                       "ERROR: %1").arg(*error), QMessageBox::Ok);
 
     }else{
-
-        if (doc->elementsByTagName("GRUP").at(0).toElement().text().toInt()) {
-
+        //Fill Configuration Form with current configuration retrievered from SubDrive
+        if (doc->elementsByTagName("SSID").length()) {
+            this->ui->router_ssid_lineEdit_2->setText(doc->elementsByTagName("SSID").at(0).toElement().text());
+        }
+        if (doc->elementsByTagName("PWD").length()) {
+            this->ui->router_pwd_lineEdit_3->setText(doc->elementsByTagName("PWD").at(0).toElement().text());
+        }
+        if (doc->elementsByTagName("SWSID").length()) {
+            this->ui->subdrive_web_id_lineEdit->setText(doc->elementsByTagName("SWSID").at(0).toElement().text());
+        }
+        if (doc->elementsByTagName("SCI").length()) {
+            this->ui->server_comm_interval_spinBox->setValue(doc->elementsByTagName("SCI").at(0).toElement().text().toInt());
+        }
+        if (doc->elementsByTagName("SADD").length()) {
+            this->ui->server_address_lineEdit_4->setText(doc->elementsByTagName("SADD").at(0).toElement().text());
         }
     }
 }
+
 void MainWindow::networkConfigDialogSlot(){    
     NetworkConfigDialog dialog(this);
     dialog.ui->customAdress_checkBox->setChecked(this->custom_address_enabled);
@@ -253,7 +326,7 @@ void MainWindow::on_advanced_pushButton_clicked()
         this->ui->advanced_pushButton->setText("Basic");
     }else{
         this->ui->advanced_frame->setVisible(false);
-        this->ui->advanced_pushButton->setText("Advanced");
+        this->ui->advanced_pushButton->setText("Advanced...");
     }
 }
 
@@ -296,5 +369,45 @@ void MainWindow::loadUerPreferences(){
 void MainWindow::closeEvent(QCloseEvent *e){
     this->saveUserPreferences();
     e->accept();
-    this->saveGeometry();
+}
+
+
+void MainWindow::on_edit_pushButton_2_clicked()
+{
+    if(this->ui->edit_pushButton_2->text()=="Edit"){
+        //Set Cancel Icon
+        QIcon icon1;
+        icon1.addFile(QStringLiteral(":/images/1413781093_Delete.png"), QSize(), QIcon::Normal, QIcon::Off);
+        this->ui->edit_pushButton_2->setIcon(icon1);
+        //Changes Button Text
+        this->ui->edit_pushButton_2->setText("Cancel Edit");
+        //Enables Configuration Form fields
+        this->ui->configuration_groupBox->setEnabled(true);
+        //Disables Retrieve Info Button
+        this->ui->retrieve_pushButton->setEnabled(false);
+        //Enables Save Button
+        this->ui->save_pushButton->setEnabled(true);
+    }else{
+        //Set Edit Icon
+        QIcon icon1;
+        icon1.addFile(QStringLiteral(":/images/pencil3.png"), QSize(), QIcon::Normal, QIcon::Off);
+        this->ui->edit_pushButton_2->setIcon(icon1);
+        //Changes button Texxt
+        this->ui->edit_pushButton_2->setText("Edit");
+        this->ui->configuration_groupBox->setEnabled(false);
+        //Retrieves Current Config from SubDrive
+        this->listCurrentConfig();
+        //Enables Retrieve Info Button
+        this->ui->retrieve_pushButton->setEnabled(true);
+        //Disables Save Button
+        this->ui->save_pushButton->setEnabled(false);
+    }
+}
+
+void MainWindow::on_list_pushButton_4_clicked()
+{
+    RoutersNetworkDialog router_networks;
+    if(router_networks.exec()){
+
+    }
 }
