@@ -31,7 +31,8 @@ win32:INCLUDEPATH += "C:\Qt_Projects\SubDriveDataLogger"
 FORMS    += mainwindow.ui \
     aboutdialog.ui \
     multdriversconfig.ui \
-    networkconfigdialog.ui
+    networkconfigdialog.ui \
+    dialog.ui
 
 CONFIG += mobility
 MOBILITY = 
@@ -41,6 +42,4 @@ RESOURCES += \
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 
-OTHER_FILES += \
-    android/AndroidManifest.xml
 

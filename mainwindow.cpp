@@ -16,7 +16,6 @@
 #include "aboutdialog.h"
 #include "version.h"
 #include "build_version.h"
-#include "multdriversconfig.h"
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
