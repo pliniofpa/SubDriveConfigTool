@@ -12,6 +12,7 @@
 #include <QItemSelectionModel>
 #include <QSettings>
 #include <QMessageBox>
+#include <QtXml>
 #include <QDomDocument>
 #include <QDomNodeList>
 #include <QDomNode>
@@ -20,6 +21,10 @@
 #include "version.h"
 #include "build_version.h"
 #include "routersnetworkdialog.h"
+#include "ui_routersnetworkdialog.h"
+#include <QTableWidget>
+#include <QTableWidgetItem>
+#include <QProgressBar>
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -151,6 +156,9 @@ void MainWindow::selectNetwork(){
         //Changes the text to Change Network again
         this->ui->select_pushButton_3->setText("Change Network");
         //List Current Configuration
+        if(this->ui->edit_pushButton_2->text()!="Edit"){
+            this->on_edit_pushButton_2_clicked();
+        }
         listCurrentConfig();
     }else{
         //Enables elements for selecting a Network
@@ -162,6 +170,7 @@ void MainWindow::selectNetwork(){
         this->ui->buttons_frame->setEnabled(false);
         //Changes the text to Select again
         this->ui->select_pushButton_3->setText("Select");
+
     }
 }
 
@@ -175,11 +184,11 @@ void MainWindow::listCurrentConfig(){
     stream.setAutoFormatting(true);
     stream.writeStartDocument();
     stream.writeStartElement("CCL");
-    //stream.writeAttribute("href", "http://qt-project.org/");
+    //stream.writeAttribute("href", "http://qt-projekkkkkkkkkkkkkct.org/");
     //stream.writeTextElement("title", "Qt Project");
     stream.writeCharacters("1");
     stream.writeEndElement(); // bookmark
-    stream.writeEndDocument();
+    //stream.writeEndDocument();
     this->request(xml_request);
 }
 
@@ -187,6 +196,7 @@ void MainWindow::saveConfig(){
     //Disables Configuration Group Box and Buttons Frame
     this->ui->configuration_groupBox->setEnabled(false);
     this->ui->buttons_frame->setEnabled(false);
+
     //Send Read Configuration Request
     QByteArray xml_request;
     QXmlStreamWriter stream(&xml_request);
@@ -207,10 +217,12 @@ void MainWindow::saveConfig(){
     stream.writeStartElement("SADD");
     stream.writeCharacters(this->ui->server_address_lineEdit_4->text());
     stream.writeEndElement(); // SADD
-    stream.writeEndDocument();
+    //stream.writeEndDocument();
     this->request(xml_request);
     //Call Function of Clicking Edit Button
     this->on_edit_pushButton_2_clicked();
+
+
 }
 
 MainWindow::~MainWindow()
@@ -219,37 +231,41 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::request(QByteArray xml_request){
-    if(this->manager==NULL){
-        this->manager = new QNetworkAccessManager(this);
-        //this->manager->setConfiguration(this->ui->networks_tableWidget->sele);
-    }
-    //Connect to the selected Network
-    QItemSelectionModel *select = this->ui->networks_tableWidget->selectionModel();
-    int row = select->currentIndex().row();
-    QTableWidgetItem *item = this->ui->networks_tableWidget->item(row,1);
-    int index = item->text().toInt();
-    manager->setConfiguration(networks.at(index));
-    qDebug()<<manager->configuration().name();
-
-    if(this->reply){
-        delete this->reply;
-        this->reply =0;
-    }
-    QUrl *url;
-    if(this->custom_address_enabled){
-        url = new QUrl(this->subdrive_custom_address+"/gainspan/profile/mcu");
+    if(this->reply==0 || (this->reply && this->reply->isFinished())){
+        if(this->manager==NULL){
+            this->manager = new QNetworkAccessManager(this);
+            //this->manager->setConfiguration(this->ui->networks_tableWidget->sele);
+        }
+        //Connect to the selected Network
+        QItemSelectionModel *select = this->ui->networks_tableWidget->selectionModel();
+        int row = select->currentIndex().row();
+        QTableWidgetItem *item = this->ui->networks_tableWidget->item(row,1);
+        int index = item->text().toInt();
+        manager->setConfiguration(networks.at(index));
+        //qDebug()<<manager->configuration().name();
+        //Deletes Reply and sets its pointer to 0
+        if(this->reply){
+            delete this->reply;
+            this->reply =0;
+        }
+        QUrl *url;
+        if(this->custom_address_enabled){
+            url = new QUrl(this->subdrive_custom_address+"/gainspan/profile/mcu");
+        }else{
+            //url = new QUrl(QString(this->default_address+"/gainspan/profile/mcu"));
+            url = new QUrl(QString(this->default_address));
+        }
+        QNetworkRequest request(*url);
+        //Sets Content Type for request
+        request.setHeader(QNetworkRequest::ContentTypeHeader,"application/xml");
+        //Makes de POST Request
+        this->reply = manager->post(request,xml_request);
+        //Starts TimeOut Timer
+        requestTimeOut.start(this->timeout*1000);//Start Timeout Timer
+        QObject::connect(reply, SIGNAL(finished()), this, SLOT(parseXML()));
     }else{
-        //url = new QUrl(QString(this->default_address+"/gainspan/profile/mcu"));
-        url = new QUrl(QString(this->default_address));
+        QTimer::singleShot(500,this,SLOT(listCurrentConfig()));
     }
-    QNetworkRequest request(*url);
-    //Sets Content Type for request
-    request.setHeader(QNetworkRequest::ContentTypeHeader,"application/xml");
-    //Makes de POST Request
-    this->reply = manager->post(request,xml_request);
-    //Starts TimeOut Timer
-    requestTimeOut.start(this->timeout*1000);//Start Timeout Timer
-    QObject::connect(reply, SIGNAL(finished()), this, SLOT(parseXML()));
 }
 void MainWindow::abortRequest(){
     if(this->reply){
@@ -263,8 +279,6 @@ void MainWindow::abortRequest(){
 
 void MainWindow::parseXML()
 {
-    qDebug()<< Q_FUNC_INFO;
-
     QDomDocument *doc = new QDomDocument();
     QString *error = new QString();
     int *a = new int(-1);
@@ -281,6 +295,10 @@ void MainWindow::parseXML()
         return;//Interrupt this function in case of error
     }
     QByteArray replyByteArray = reply->readAll();
+
+    qDebug()<< Q_FUNC_INFO << replyByteArray;
+
+
     if (!doc->setContent(replyByteArray,error,a,b)){
         QMessageBox::critical(0, qApp->tr("Error Parsing XML File"),
                               qApp->tr("An error occurred while parsing XML Response File.\n"
@@ -303,6 +321,33 @@ void MainWindow::parseXML()
         }
         if (doc->elementsByTagName("SADD").length()) {
             this->ui->server_address_lineEdit_4->setText(doc->elementsByTagName("SADD").at(0).toElement().text());
+        }
+        //In case of Responsing with Routers Networks
+        if(doc->elementsByTagName("NETWORKS").length()){
+            QTableWidget *routerNetworkTable = this->routerNetworkDialog->ui->router_networks_tableWidget;
+            QDomNodeList networks = doc->elementsByTagName("NETWORKS").at(0).childNodes();
+            for(int i=0;i<networks.length();++i){
+                routerNetworkTable->setRowCount(routerNetworkTable->rowCount()+1);
+                QTableWidgetItem *newItem = new QTableWidgetItem(networks.at(i).toElement().elementsByTagName("SSID").at(0).toElement().text());
+                routerNetworkTable->setItem(routerNetworkTable->rowCount()-1,0,newItem);
+                newItem = 0;
+                newItem =  new QTableWidgetItem(networks.at(i).toElement().elementsByTagName("RSSI").at(0).toElement().text().remove("-"));
+                routerNetworkTable->setItem(routerNetworkTable->rowCount()-1,1,newItem);
+                //Set Progress Bar
+                QProgressBar *progress_bar = new QProgressBar();
+                progress_bar->setMaximumHeight(20);
+                progress_bar->setMinimum(0);
+                progress_bar->setMaximum(100);
+                progress_bar->setValue(newItem->text().toInt());
+                routerNetworkTable->setCellWidget(routerNetworkTable->rowCount()-1,1,progress_bar);
+                newItem = 0;
+                newItem = new QTableWidgetItem(networks.at(i).toElement().elementsByTagName("SECURITY").at(0).toElement().text());
+                routerNetworkTable->setItem(routerNetworkTable->rowCount()-1,2,newItem);
+                newItem = 0;
+            }
+            routerNetworkTable->resizeColumnsToContents();
+            routerNetworkTable->resizeRowsToContents();
+            routerNetworkTable->setSortingEnabled(true);
         }
     }
 }
@@ -406,8 +451,35 @@ void MainWindow::on_edit_pushButton_2_clicked()
 
 void MainWindow::on_list_pushButton_4_clicked()
 {
-    RoutersNetworkDialog router_networks;
-    if(router_networks.exec()){
 
+    QString temp = this->default_address;
+    this->default_address = "http://localhost/data.php?group=7";
+    this->routerNetworkDialog = new RoutersNetworkDialog(this);
+    //Send Read Configuration Request
+    QByteArray xml_request;
+    QXmlStreamWriter stream(&xml_request);
+    stream.setAutoFormatting(true);
+    stream.writeStartDocument();
+    stream.writeStartElement("LST_NTW");
+    stream.writeCharacters("1");
+    stream.writeEndElement(); // LST_NTW
+    this->request(xml_request);
+    //Shows Model Dialog
+    if(routerNetworkDialog->exec()){
+        QTableWidget *curTable = this->routerNetworkDialog->ui->router_networks_tableWidget;
+        int selected_row = curTable->selectionModel()->currentIndex().row();
+        //Set SSID on the Router SSID Field
+        this->ui->router_ssid_lineEdit_2->setText(curTable->item(selected_row,0)->text());
+        if(curTable->item(selected_row,2)->text()=="NONE"){
+            this->ui->router_pwd_lineEdit_3->setText("NONE");
+            this->ui->router_pwd_lineEdit_3->setEnabled(false);
+        }else{
+            this->ui->router_pwd_lineEdit_3->clear();
+            this->ui->router_pwd_lineEdit_3->setEnabled(true);
+        }
     }
+    //Deletes Dialog Object
+    delete this->routerNetworkDialog;
+    this->default_address = temp;
 }
+

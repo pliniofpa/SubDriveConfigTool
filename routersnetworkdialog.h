@@ -2,13 +2,14 @@
 #define ROUTERSNETWORKDIALOG_H
 
 #include <QDialog>
-
+#include "mainwindow.h"
 namespace Ui {
 class RoutersNetworkDialog;
 }
 
 class RoutersNetworkDialog : public QDialog
 {
+    friend class MainWindow;
     Q_OBJECT
 
 public:
@@ -17,6 +18,8 @@ public:
 
 private:
     Ui::RoutersNetworkDialog *ui;
+private slots:
+    void selectionChanged();
 };
 
 #endif // ROUTERSNETWORKDIALOG_H

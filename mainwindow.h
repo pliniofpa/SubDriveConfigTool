@@ -23,6 +23,7 @@ class QNetworkReply;
 class QTableWidget;
 class QScroller;
 class MultDriversConfig;
+class RoutersNetworkDialog;
 namespace Ui {
 class MainWindow;
 
@@ -170,6 +171,7 @@ private:
     QString subdrive_custom_address;
     int timeout;
     bool custom_address_enabled;
+    RoutersNetworkDialog *routerNetworkDialog;
 
 };
 #endif // MAINWINDOW_H
