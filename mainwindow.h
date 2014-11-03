@@ -53,10 +53,10 @@ public:
      */
     ~MainWindow();
 private slots:
-    void selectionChanged();
     void networkConfigDialogSlot();    
     void listCurrentConfig();
     void saveConfig();
+    void connectSubDrive();
     /**
      * @brief Shows application About dialog.
      *
@@ -89,13 +89,6 @@ private slots:
     void parseXML();
 
     void on_advanced_pushButton_clicked();
-
-    /**
-     * @brief Produces a list of availiable networks.
-     *
-     */
-    void listNetworks();
-    void selectNetwork();
 
     void on_edit_pushButton_2_clicked();
 

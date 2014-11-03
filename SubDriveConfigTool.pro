@@ -32,7 +32,6 @@ win32:INCLUDEPATH += "C:\Qt_Projects\SubDriveDataLogger"
 
 FORMS    += mainwindow.ui \
     aboutdialog.ui \
-    multdriversconfig.ui \
     networkconfigdialog.ui \
     dialog.ui \
     routersnetworkdialog.ui

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>487</width>
-    <height>611</height>
+    <width>455</width>
+    <height>554</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,63 +18,49 @@
     <normaloff>:/images/settings.ico</normaloff>:/images/settings.ico</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout_4">
+   <layout class="QVBoxLayout" name="verticalLayout_3">
     <item>
-     <widget class="QGroupBox" name="networks_groupBox">
-      <property name="title">
-       <string>Availaible SubDrive Networks</string>
+     <widget class="QFrame" name="frame_2">
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_6">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item>
-        <widget class="QTableWidget" name="networks_tableWidget"/>
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
-          <spacer name="horizontalSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QPushButton" name="updateList_pushButton">
-           <property name="text">
-            <string>Update List</string>
-           </property>
-           <property name="icon">
-            <iconset resource="res.qrc">
-             <normaloff>:/images/1414629197_list-unordered-128.png</normaloff>:/images/1414629197_list-unordered-128.png</iconset>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="only_subdrive_checkBox">
-           <property name="text">
-            <string>Only SubDrive Wireless Networks</string>
-           </property>
-           <property name="icon">
-            <iconset resource="res.qrc">
-             <normaloff>:/images/1414629133_empty_filter.png</normaloff>:/images/1414629133_empty_filter.png</iconset>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item alignment="Qt::AlignRight">
-        <widget class="QPushButton" name="select_pushButton_3">
+        <widget class="QPushButton" name="connect_pushButton">
          <property name="text">
-          <string>Select</string>
+          <string>Connect to SubDrive</string>
          </property>
          <property name="icon">
           <iconset resource="res.qrc">
-           <normaloff>:/images/Sign-Select-icon.png</normaloff>:/images/Sign-Select-icon.png</iconset>
+           <normaloff>:/images/1415019116_Wireless_signal.png</normaloff>:/images/1415019116_Wireless_signal.png</iconset>
          </property>
         </widget>
        </item>
@@ -86,7 +72,7 @@
       <property name="title">
        <string>SubDrive Configuration</string>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
+      <layout class="QVBoxLayout" name="verticalLayout_4">
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
@@ -212,7 +198,7 @@
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout">
+         <layout class="QVBoxLayout" name="verticalLayout_2">
           <property name="leftMargin">
            <number>0</number>
           </property>
@@ -296,11 +282,214 @@
             </item>
            </layout>
           </item>
+          <item>
+           <widget class="QRadioButton" name="radioButton">
+            <property name="text">
+             <string>DHCP Client</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="radioButton_2">
+            <property name="text">
+             <string>Fixed IP</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QFrame" name="fixed_ip_frame">
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout">
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_9">
+               <item>
+                <widget class="QLabel" name="label_6">
+                 <property name="text">
+                  <string>IP:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>server_address_lineEdit_4</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_7">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="fixed_ip_lineEdit_5">
+                 <property name="minimumSize">
+                  <size>
+                   <width>250</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_10">
+               <item>
+                <widget class="QLabel" name="label_7">
+                 <property name="text">
+                  <string>Network Mask:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>server_address_lineEdit_4</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_8">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="fixed_ip_lineEdit_6">
+                 <property name="minimumSize">
+                  <size>
+                   <width>250</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_11">
+               <item>
+                <widget class="QLabel" name="label_8">
+                 <property name="text">
+                  <string>Gateway:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>server_address_lineEdit_4</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_9">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="fixed_ip_lineEdit_7">
+                 <property name="minimumSize">
+                  <size>
+                   <width>250</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_12">
+               <item>
+                <widget class="QLabel" name="label_9">
+                 <property name="text">
+                  <string>DNS Server:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>server_address_lineEdit_4</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_10">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="fixed_ip_lineEdit_8">
+                 <property name="minimumSize">
+                  <size>
+                   <width>250</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </item>
          </layout>
+         <zorder>radioButton</zorder>
+         <zorder>radioButton_2</zorder>
+         <zorder></zorder>
+         <zorder>fixed_ip_frame</zorder>
         </widget>
        </item>
       </layout>
      </widget>
+    </item>
+    <item>
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>40</height>
+       </size>
+      </property>
+     </spacer>
     </item>
     <item>
      <widget class="QFrame" name="buttons_frame">
@@ -324,7 +513,7 @@
         <number>0</number>
        </property>
        <item>
-        <spacer name="horizontalSpacer_2">
+        <spacer name="horizontalSpacer">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -354,7 +543,7 @@
          </property>
          <property name="icon">
           <iconset resource="res.qrc">
-           <normaloff>:/images/pencil3.png</normaloff>:/images/pencil3.png</iconset>
+           <normaloff>:/images/edit-icon.png</normaloff>:/images/edit-icon.png</iconset>
          </property>
         </widget>
        </item>
@@ -386,8 +575,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>487</width>
-     <height>21</height>
+     <width>455</width>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

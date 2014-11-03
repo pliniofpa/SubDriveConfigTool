@@ -43,137 +43,23 @@ MainWindow::MainWindow(QWidget *parent) :
     //this->default_address = "http://192.168.240.1";
     this->default_address = "http://localhost/data.php?group=0";
     this->loadUerPreferences();
-    //Create Network Table
-    createNetworksTable();
-    //Disables Select button
-    this->ui->select_pushButton_3->setEnabled(false);
-    //Fills created tables with available networks
-    listNetworks();
-}
-void MainWindow::selectionChanged(){
-    qDebug()<< Q_FUNC_INFO;
-
-    if(this->ui->networks_tableWidget->selectedItems().size()!=0){
-        this->ui->select_pushButton_3->setEnabled(true);
-    }
 }
 
 void MainWindow::makeconnections(){
     connect(this->ui->actionAboutApp,SIGNAL(triggered()),this,SLOT(aboutApp()));
     connect(this->ui->actionNetwork_Config,SIGNAL(triggered()),this,SLOT(networkConfigDialogSlot()));
     connect(this->ui->actionExit,SIGNAL(triggered()),this,SLOT(close()));
-    connect(this->ui->updateList_pushButton,SIGNAL(clicked()),this,SLOT(listNetworks()));
-    connect(this->ui->only_subdrive_checkBox,SIGNAL(clicked()),this,SLOT(listNetworks()));
-    connect(this->ui->select_pushButton_3,SIGNAL(clicked()),this,SLOT(selectNetwork()));
     connect(&this->requestTimeOut,SIGNAL(timeout()),this,SLOT(abortRequest()));
-    connect(this->ui->networks_tableWidget,SIGNAL(itemSelectionChanged()),this,SLOT(selectionChanged()));
     connect(this->ui->retrieve_pushButton,SIGNAL(clicked()),this,SLOT(listCurrentConfig()));
     connect(this->ui->save_pushButton,SIGNAL(clicked()),this,SLOT(saveConfig()));
+    connect(this->ui->connect_pushButton,SIGNAL(clicked()),this,SLOT(connectSubDrive()));
 }
 
-void MainWindow::createNetworksTable(){
-    QTableWidget *curTable;
-    curTable = this->ui->networks_tableWidget;
-    //Sets number of columns in the table to 2
-    curTable->setColumnCount(2);
-    //Creates the headers.
-    curTable->setHorizontalHeaderLabels(QStringList(QString(tr("Network Name,#")).split(",")));
-    curTable->hideColumn(1);
-    //Scroll Configuration
-    curTable->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
-    QScroller::grabGesture(curTable->viewport(), QScroller::LeftMouseButtonGesture);
-    //Resizes Table Columns and Rows
-    curTable->resizeColumnsToContents();
-    curTable->resizeRowsToContents();
-    //Sets Headers Movable
-    //curTable->horizontalHeader()->setSectionsMovable(true);
-    //Sets selection behaviior and mode
-    curTable->setSelectionBehavior(QAbstractItemView::SelectRows);
-    curTable->setSelectionMode(QAbstractItemView::SingleSelection);
-    curTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    curTable = 0;
-}
 
-void MainWindow::listNetworks(){
-    //Disable Select Button
-    this->ui->select_pushButton_3->setEnabled(false);
-    //Changes Update button to disable and "Updating..."
-    QString button_text = this->ui->updateList_pushButton->text();
-    this->ui->updateList_pushButton->setText("Updating...");
-    this->ui->updateList_pushButton->setEnabled(false);
-    QNetworkConfigurationManager manager;
-    //List available networks
-    QList<QNetworkConfiguration> temp = manager.allConfigurations(QNetworkConfiguration::Undefined);
-    temp.append(manager.allConfigurations(QNetworkConfiguration::Discovered));
-    networks = temp;
-    QTableWidget *curTable = this->ui->networks_tableWidget;
-    //Clear table
-    curTable->clearContents();
-    curTable->setRowCount(0);
-    //Stop sorting before insert more items
-    curTable->setSortingEnabled(false);
-    //Inserts avaliable networks in the table
-    for(int i=0;i<networks.length();++i){
-        if(networks.at(i).bearerType()==QNetworkConfiguration::BearerWLAN){
-            if(this->ui->only_subdrive_checkBox->isChecked()){
-                QString network_name = networks.at(i).name();
-                if(network_name.contains("FECNCT")){
-                    //qDebug()<<"Here!!!";
-                    //Creates new table row
-                    curTable->setRowCount(curTable->rowCount()+1);
-                    QTableWidgetItem *curItem = new QTableWidgetItem(network_name);
-                    curTable->setItem(i,0,curItem);
-                    curItem = new QTableWidgetItem(QString::number(i));
-                    curTable->setItem(i,1,curItem);
-                }
-            }else{
-                //Creates new table row
-                curTable->setRowCount(curTable->rowCount()+1);
-                QTableWidgetItem *curItem = new QTableWidgetItem(networks.at(i).name());
-                curTable->setItem(i,0,curItem);
-                curItem = new QTableWidgetItem(QString::number(i));
-                curTable->setItem(i,1,curItem);
-            }
-
-        }
-    }
-    //Actives sorting before insert more items
-    curTable->setSortingEnabled(true);
-    //Resizes Table Columns and Rows
-    curTable->resizeColumnsToContents();
-    curTable->resizeRowsToContents();
-    //Changes Update button to disable and sets default text
-    this->ui->updateList_pushButton->setText(button_text);
-    this->ui->updateList_pushButton->setEnabled(true);
-}
-
-void MainWindow::selectNetwork(){
-    if(this->ui->select_pushButton_3->text()=="Select"){
-        //Disables elements for selecting a Network
-        this->ui->networks_tableWidget->setEnabled(false);
-        this->ui->only_subdrive_checkBox->setEnabled(false);
-        this->ui->updateList_pushButton->setEnabled(false);
-        //Changes the text to Change Network again
-        this->ui->select_pushButton_3->setText("Change Network");
-        //List Current Configuration
-        if(this->ui->edit_pushButton_2->text()!="Edit"){
-            this->on_edit_pushButton_2_clicked();
-        }
+void MainWindow::connectSubDrive(){
+//this->ui->connect_pushButton->setEnabled(false);
         listCurrentConfig();
-    }else{
-        //Enables elements for selecting a Network
-        this->ui->networks_tableWidget->setEnabled(true);
-        this->ui->only_subdrive_checkBox->setEnabled(true);
-        this->ui->updateList_pushButton->setEnabled(true);
-        //Disables Configuration Group Box and Buttons Frame
-        this->ui->configuration_groupBox->setEnabled(false);
-        this->ui->buttons_frame->setEnabled(false);
-        //Changes the text to Select again
-        this->ui->select_pushButton_3->setText("Select");
-
-    }
 }
-
 void MainWindow::listCurrentConfig(){
     //Disables Configuration Group Box and Buttons Frame
     this->ui->configuration_groupBox->setEnabled(false);
@@ -236,13 +122,7 @@ void MainWindow::request(QByteArray xml_request){
             this->manager = new QNetworkAccessManager(this);
             //this->manager->setConfiguration(this->ui->networks_tableWidget->sele);
         }
-        //Connect to the selected Network
-        QItemSelectionModel *select = this->ui->networks_tableWidget->selectionModel();
-        int row = select->currentIndex().row();
-        QTableWidgetItem *item = this->ui->networks_tableWidget->item(row,1);
-        int index = item->text().toInt();
-        manager->setConfiguration(networks.at(index));
-        //qDebug()<<manager->configuration().name();
+        qDebug()<<manager->configuration().name();
         //Deletes Reply and sets its pointer to 0
         if(this->reply){
             delete this->reply;
@@ -390,7 +270,6 @@ void MainWindow::saveUserPreferences(){
     toSave.beginGroup("MainWindow");
     toSave.setValue("size",this->size());
     toSave.setValue("pos",this->pos());
-    toSave.setValue("only_subdrive_networks",this->ui->only_subdrive_checkBox->isChecked());
     toSave.endGroup();
     toSave.beginGroup("NetworkConfig");
     toSave.setValue("timeout",this->timeout);
@@ -403,7 +282,6 @@ void MainWindow::loadUerPreferences(){
     toLoad.beginGroup("MainWindow");
     this->resize(toLoad.value("size", QSize(400,250)).toSize());
     this->move(toLoad.value("pos", QPoint(200, 200)).toPoint());
-    this->ui->only_subdrive_checkBox->setChecked(toLoad.value("only_subdrive_networks", false).toBool());
     toLoad.endGroup();
     toLoad.beginGroup("NetworkConfig");
     this->timeout = toLoad.value("timeout", 20).toInt();
