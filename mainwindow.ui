@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>455</width>
-    <height>554</height>
+    <width>382</width>
+    <height>490</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -73,6 +73,36 @@
        <string>SubDrive Configuration</string>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_13">
+         <item>
+          <widget class="QLabel" name="label_10">
+           <property name="text">
+            <string>SubDrive Serial Number:</string>
+           </property>
+           <property name="buddy">
+            <cstring>router_ssid_lineEdit_2</cstring>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="subdrive_sn_lineEdit_3">
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="frame">
+            <bool>true</bool>
+           </property>
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
@@ -283,14 +313,14 @@
            </layout>
           </item>
           <item>
-           <widget class="QRadioButton" name="radioButton">
+           <widget class="QRadioButton" name="dhcp_radioButton">
             <property name="text">
              <string>DHCP Client</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QRadioButton" name="radioButton_2">
+           <widget class="QRadioButton" name="fixed_ip__radioButton_2">
             <property name="text">
              <string>Fixed IP</string>
             </property>
@@ -329,26 +359,10 @@
                  </property>
                 </widget>
                </item>
-               <item>
-                <spacer name="horizontalSpacer_7">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item>
-                <widget class="QLineEdit" name="fixed_ip_lineEdit_5">
-                 <property name="minimumSize">
-                  <size>
-                   <width>250</width>
-                   <height>0</height>
-                  </size>
+               <item alignment="Qt::AlignRight">
+                <widget class="QLineEdit" name="fixed_ip_IP_lineEdit_5">
+                 <property name="inputMask">
+                  <string>999.999.999.999</string>
                  </property>
                 </widget>
                </item>
@@ -366,26 +380,10 @@
                  </property>
                 </widget>
                </item>
-               <item>
-                <spacer name="horizontalSpacer_8">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item>
-                <widget class="QLineEdit" name="fixed_ip_lineEdit_6">
-                 <property name="minimumSize">
-                  <size>
-                   <width>250</width>
-                   <height>0</height>
-                  </size>
+               <item alignment="Qt::AlignRight">
+                <widget class="QLineEdit" name="fixed_ip_net_mask_lineEdit_6">
+                 <property name="inputMask">
+                  <string>999.999.999.999</string>
                  </property>
                 </widget>
                </item>
@@ -403,26 +401,10 @@
                  </property>
                 </widget>
                </item>
-               <item>
-                <spacer name="horizontalSpacer_9">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item>
-                <widget class="QLineEdit" name="fixed_ip_lineEdit_7">
-                 <property name="minimumSize">
-                  <size>
-                   <width>250</width>
-                   <height>0</height>
-                  </size>
+               <item alignment="Qt::AlignRight">
+                <widget class="QLineEdit" name="fixed_ip_gateway_lineEdit_7">
+                 <property name="inputMask">
+                  <string>999.999.999.999</string>
                  </property>
                 </widget>
                </item>
@@ -440,26 +422,10 @@
                  </property>
                 </widget>
                </item>
-               <item>
-                <spacer name="horizontalSpacer_10">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item>
-                <widget class="QLineEdit" name="fixed_ip_lineEdit_8">
-                 <property name="minimumSize">
-                  <size>
-                   <width>250</width>
-                   <height>0</height>
-                  </size>
+               <item alignment="Qt::AlignRight">
+                <widget class="QLineEdit" name="fixed_ip_dns_server_lineEdit_8">
+                 <property name="inputMask">
+                  <string>999.999.999.999</string>
                  </property>
                 </widget>
                </item>
@@ -469,27 +435,14 @@
            </widget>
           </item>
          </layout>
-         <zorder>radioButton</zorder>
-         <zorder>radioButton_2</zorder>
+         <zorder>dhcp_radioButton</zorder>
+         <zorder>fixed_ip__radioButton_2</zorder>
          <zorder></zorder>
          <zorder>fixed_ip_frame</zorder>
         </widget>
        </item>
       </layout>
      </widget>
-    </item>
-    <item>
-     <spacer name="verticalSpacer">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>40</height>
-       </size>
-      </property>
-     </spacer>
     </item>
     <item>
      <widget class="QFrame" name="buttons_frame">
@@ -568,6 +521,19 @@
       </layout>
      </widget>
     </item>
+    <item>
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>40</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -575,8 +541,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>455</width>
-     <height>26</height>
+     <width>382</width>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

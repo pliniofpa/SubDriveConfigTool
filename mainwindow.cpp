@@ -53,6 +53,7 @@ void MainWindow::makeconnections(){
     connect(this->ui->retrieve_pushButton,SIGNAL(clicked()),this,SLOT(listCurrentConfig()));
     connect(this->ui->save_pushButton,SIGNAL(clicked()),this,SLOT(saveConfig()));
     connect(this->ui->connect_pushButton,SIGNAL(clicked()),this,SLOT(connectSubDrive()));
+    connect(this->ui->fixed_ip__radioButton_2,SIGNAL(toggled(bool)),this->ui->fixed_ip_frame,SLOT(setVisible(bool)));
 }
 
 
@@ -103,6 +104,24 @@ void MainWindow::saveConfig(){
     stream.writeStartElement("SADD");
     stream.writeCharacters(this->ui->server_address_lineEdit_4->text());
     stream.writeEndElement(); // SADD
+    stream.writeStartElement("SADD");
+    stream.writeCharacters(this->ui->server_address_lineEdit_4->text());
+    stream.writeEndElement(); // SADD
+    stream.writeStartElement("DHCP");
+    stream.writeCharacters(this->ui->dhcp_radioButton->isChecked()?"1":"0");
+    stream.writeEndElement(); // DHCP
+    stream.writeStartElement("FIX_IP");
+    stream.writeCharacters(this->ui->fixed_ip_IP_lineEdit_5->text());
+    stream.writeEndElement(); // FIX_IP
+    stream.writeStartElement("NET_MSK");
+    stream.writeCharacters(this->ui->fixed_ip_net_mask_lineEdit_6->text());
+    stream.writeEndElement(); // NET_MSK
+    stream.writeStartElement("GTW");
+    stream.writeCharacters(this->ui->fixed_ip_gateway_lineEdit_7->text());
+    stream.writeEndElement(); // NET_MSK
+    stream.writeStartElement("DSN_SRV");
+    stream.writeCharacters(this->ui->fixed_ip_dns_server_lineEdit_8->text());
+    stream.writeEndElement(); // DNS_SRV
     //stream.writeEndDocument();
     this->request(xml_request);
     //Call Function of Clicking Edit Button
@@ -187,6 +206,9 @@ void MainWindow::parseXML()
 
     }else{
         //Fill Configuration Form with current configuration retrievered from SubDrive
+        if (doc->elementsByTagName("SN").length()) {
+            this->ui->subdrive_sn_lineEdit_3->setText(doc->elementsByTagName("SN").at(0).toElement().text());
+        }
         if (doc->elementsByTagName("SSID").length()) {
             this->ui->router_ssid_lineEdit_2->setText(doc->elementsByTagName("SSID").at(0).toElement().text());
         }
@@ -201,6 +223,26 @@ void MainWindow::parseXML()
         }
         if (doc->elementsByTagName("SADD").length()) {
             this->ui->server_address_lineEdit_4->setText(doc->elementsByTagName("SADD").at(0).toElement().text());
+        }
+        if (doc->elementsByTagName("DHCP").length()) {
+            bool dhcp_enabled = doc->elementsByTagName("DHCP").at(0).toElement().text()=="1"?true:false;
+            this->ui->dhcp_radioButton->setChecked(dhcp_enabled);
+            this->ui->fixed_ip__radioButton_2->setChecked(!dhcp_enabled);
+        }
+        if (doc->elementsByTagName("FIX_IP").length()) {
+            this->ui->fixed_ip_IP_lineEdit_5->setText(doc->elementsByTagName("FIX_IP").at(0).toElement().text());
+        }
+
+        if (doc->elementsByTagName("NET_MSK").length()) {
+            this->ui->fixed_ip_net_mask_lineEdit_6->setText(doc->elementsByTagName("NET_MSK").at(0).toElement().text());
+        }
+
+        if (doc->elementsByTagName("GTW").length()) {
+            this->ui->fixed_ip_gateway_lineEdit_7->setText(doc->elementsByTagName("GTW").at(0).toElement().text());
+        }
+
+        if (doc->elementsByTagName("DNS_SRV").length()) {
+            this->ui->fixed_ip_dns_server_lineEdit_8->setText(doc->elementsByTagName("DNS_SRV").at(0).toElement().text());
         }
         //In case of Responsing with Routers Networks
         if(doc->elementsByTagName("NETWORKS").length()){
@@ -247,10 +289,14 @@ void MainWindow::networkConfigDialogSlot(){
 void MainWindow::on_advanced_pushButton_clicked()
 {
     if(!this->ui->advanced_frame->isVisible()){
+        this->saved_size = new QSize(this->width(),this->height());
         this->ui->advanced_frame->setVisible(true);
         this->ui->advanced_pushButton->setText("Basic");
     }else{
         this->ui->advanced_frame->setVisible(false);
+        QSize size1 = this->size();
+        this->resize(*this->saved_size);
+        QSize size2 = this->size();
         this->ui->advanced_pushButton->setText("Advanced...");
     }
 }

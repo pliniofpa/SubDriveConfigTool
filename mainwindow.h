@@ -24,6 +24,7 @@ class QTableWidget;
 class QScroller;
 class MultDriversConfig;
 class RoutersNetworkDialog;
+class QSize;
 namespace Ui {
 class MainWindow;
 
@@ -165,6 +166,7 @@ private:
     int timeout;
     bool custom_address_enabled;
     RoutersNetworkDialog *routerNetworkDialog;
+    QSize *saved_size;
 
 };
 #endif // MAINWINDOW_H
