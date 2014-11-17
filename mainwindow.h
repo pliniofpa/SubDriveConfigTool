@@ -93,7 +93,7 @@ private slots:
 
     void on_edit_pushButton_2_clicked();
 
-    void on_list_pushButton_4_clicked();
+    void on_list_pushButton_4_clicked();    
 
 private:
     //MainWindow Ui

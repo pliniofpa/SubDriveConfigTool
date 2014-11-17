@@ -42,6 +42,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //Default SubDrive Address
     //this->default_address = "http://192.168.240.1";
     this->default_address = "http://localhost/data.php?group=0";
+    this->default_address = "http://http://192.168.5.1";
     this->loadUerPreferences();
 }
 
@@ -58,8 +59,9 @@ void MainWindow::makeconnections(){
 
 
 void MainWindow::connectSubDrive(){
-//this->ui->connect_pushButton->setEnabled(false);
+        this->ui->connect_pushButton->setEnabled(false);
         listCurrentConfig();
+        //this->ui->connect_pushButton->setEnabled(true);
 }
 void MainWindow::listCurrentConfig(){
     //Disables Configuration Group Box and Buttons Frame
@@ -151,8 +153,8 @@ void MainWindow::request(QByteArray xml_request){
         if(this->custom_address_enabled){
             url = new QUrl(this->subdrive_custom_address+"/gainspan/profile/mcu");
         }else{
-            //url = new QUrl(QString(this->default_address+"/gainspan/profile/mcu"));
-            url = new QUrl(QString(this->default_address));
+            url = new QUrl(QString(this->default_address+"/gainspan/profile/mcu"));
+            //url = new QUrl(QString(this->default_address));
         }
         QNetworkRequest request(*url);
         //Sets Content Type for request
@@ -174,6 +176,7 @@ void MainWindow::abortRequest(){
                           qApp->tr("Impossible to establish connection to %1\n"
                                    "Check you connection for errors or try to\n"
                                    "use a timeout greater than %2 seconds").arg(this->manager->configuration().name()).arg(this->timeout), QMessageBox::Ok);
+    this->ui->connect_pushButton->setEnabled(true);
 }
 
 void MainWindow::parseXML()
@@ -191,6 +194,7 @@ void MainWindow::parseXML()
         QMessageBox::critical(0, qApp->tr("Response Error"),
                               qApp->tr("An error happened retrieving the response from %1.\n"
                                        "Is there a SubDrive running on this netowrk?").arg(this->manager->configuration().name()), QMessageBox::Ok);
+        this->ui->connect_pushButton->setEnabled(true);
         return;//Interrupt this function in case of error
     }
     QByteArray replyByteArray = reply->readAll();
@@ -272,6 +276,7 @@ void MainWindow::parseXML()
             routerNetworkTable->setSortingEnabled(true);
         }
     }
+    this->ui->connect_pushButton->setEnabled(true);
 }
 
 void MainWindow::networkConfigDialogSlot(){    
